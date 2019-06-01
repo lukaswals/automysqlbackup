@@ -114,6 +114,13 @@ isEmpty() {
 # @return:	(none)
 mail_cleanup () {
   removeIO
+  # This is a patch to remove the Warning of MySQL regarding using password directly on command line
+  # TODO > Make a better solution, so we dont need this dirty patch
+  if [[ -s "$log_errfile" ]]; then
+    sedtmpfile="/tmp/$(basename $0).$$.tmp"
+    grep -v "Warning: Using a password on the command line interface can be insecure." "$log_errfile" > $sedtmpfile
+    mv $sedtmpfile $log_errfile
+  fi
   # if the variables $log_file and $log_errfile aren't set or are empty and both associated files don't exist, skip output methods.
   # this might happen if 'exit' occurs before they are set.
   if [[ ! -e "$log_file" && ! -e "$log_errfile" ]];then
